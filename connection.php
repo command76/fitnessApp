@@ -1,8 +1,6 @@
 <?php 
 namespace dbconnecting;
 
-include './index.php';
-
 class connection {
     private $pass = null;
     private $user = null;
@@ -60,8 +58,4 @@ class connection {
         echo "<p>Connection Closed</p>";
     }
 }
-
-$connection = (new connection());
-$connection->connectionAttempt();
-$connection->closeConnection()
 ?>
