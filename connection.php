@@ -6,6 +6,7 @@ class connection {
     private $user = null;
     private $port = null;
     private $host = null;
+    private $database = null;
     public $conn = null;
 
     public function connectionAttempt() {
@@ -19,6 +20,8 @@ class connection {
             die("Connection failed: " . $this->conn->connect_error);
           }
           echo "Connected successfully";
+        $createNewDB = file_get_contents("./db_setup.sql");
+        $this->conn->multi_query("{$createNewDB}");
     }
 
     private static function getLoginInfo($type) {
@@ -51,6 +54,15 @@ class connection {
             preg_match("/(?<=host: ).*/", $getHost, $matches );
             return $matches[0];
         }
+    }
+
+    private function getDatabase() {
+        $this->database = file_get_contents("./login_info.txt", true);
+        ob_start();
+        var_dump($this->database);
+        ob_get_clean();
+        preg_match("/(?<=database: ).*/", $this->database, $matches );
+        return $matches[0];
     }
 
     public function closeConnection() {
