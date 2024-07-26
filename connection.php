@@ -29,26 +29,18 @@ class connection
     echo "<p>Connection Closed</p>";
   }
 
-  public function runMultiQuery($query)
+  public function initiateQueries()
   {
     $this->env = parse_ini_file(".env", true);
     $this->conn = new \mysqli(
       $this->env["host"],
       $this->env["user"],
-      $this->env["pass"]
+      $this->env["pass"],
+      $this->env["database"],
+      $this->env["port"]
     );
-    return $this->conn->multi_query($query);
+    return $this->conn;
   }
-
-  // public function runFetchAssocQuery($query) {
-    
-  //   $this->conn = new \mysqli(
-  //     $this->env["host"],
-  //     $this->env["user"],
-  //     $this->env["pass"]
-  //   );
-  //   return $this->conn->mysqli_fetch_assoc($query);
-  // }
 }
 
 ?>
