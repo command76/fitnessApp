@@ -5,7 +5,7 @@ use dbconnecting as DB;
 $connectionObject = new DB\connection();
 $connectionObject->connectionAttempt();
 
-$number = $_GET["amount"];
+$number = isset($_GET["amount"]) ? $_GET["amount"] : 1;
 $i = 0;
 
 $generate_last_name = [
@@ -215,26 +215,43 @@ $generate_first_name = [
 ];
 
 while ($i < $number) {
-  $first_name = $generate_first_name[rand(0, 99)];
-  $last_name = $generate_last_name[rand(0, 99)];
-
-  $post_query = <<<EOF
+  if (isset($_GET["first_name"]) && isset($_GET["last_name"])) {
+    $first_name = $_GET["first_name"];
+    $last_name = $_GET["last_name"];
+    if (
+      preg_match("/[A-Za-z]*/", $first_name) &&
+      preg_match("/[A-Za-z]*/", $last_name)
+    ) {
+      $post_query = <<<EOF
 USE fitnessApp;
 INSERT INTO users (birthday, first_name, last_name, email, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$first_name', '$last_name', '{$first_name}_{$last_name}@famous_star.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
 EOF;
-  $connectionObject->initiateQueries()->multi_query($post_query);
+      $connectionObject->initiateQueries()->multi_query($post_query);
+      $i++;
+    }
+  } else {
+    $first_name = $generate_first_name[rand(0, 99)];
+    $last_name = $generate_last_name[rand(0, 99)];
 
-  $i++;
+    $post_query = <<<EOF
+USE fitnessApp;
+INSERT INTO users (birthday, first_name, last_name, email, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$first_name', '$last_name', '{$first_name}_{$last_name}@famous_star.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
+EOF;
+    $connectionObject->initiateQueries()->multi_query($post_query);
+
+    $i++;
+  }
 }
 
 $get_query = <<<EOF
 SELECT * FROM users
-WHERE updated_at > (now() - INTERVAL 10 SECOND)
+WHERE updated_at > (now() - INTERVAL 1 SECOND)
 ORDER BY user_id ASC
 LIMIT $number;
 EOF;
 
 $get_ids = $connectionObject->initiateQueries()->query($get_query);
+
 while ($result = $get_ids->fetch_assoc()) {
   $get_random_pushups = rand(0, 100);
   $get_random_situps = rand(0, 100);
