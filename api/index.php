@@ -1,6 +1,6 @@
 <?php
-use dbconnecting as DB;
 require "../connection.php";
+use dbconnecting as DB;
 $connectionObject = new DB\connection();
 $connectionObject->connectionAttempt();
 
