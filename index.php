@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<?php 
-require('./connection.php');
+<?php
+require "./connection.php";
 use dbconnecting as DB;
-$connectionObject = new DB\connection;
+$connectionObject = new DB\connection();
 $connectionObject->connectionAttempt();
 $connectionObject->closeConnection();
 ?>
-<?php echo "<h1>Index</h1>" ?>
+<?php echo "<h1>Index</h1>"; ?>
