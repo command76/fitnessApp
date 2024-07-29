@@ -5,7 +5,6 @@ use dbconnecting as DB;
 function get_random_users($number)
 {
   $connectionObject = new DB\connection();
-  $connectionObject->connectionAttempt();
   $i = 0;
 
   $generate_last_name = [
@@ -226,8 +225,8 @@ EOF;
 
     $i++;
   }
-  inject_random_workouts($number);
   $connectionObject->closeConnection();
+  inject_random_workouts($number);
 }
 
 function get_predefined_user($fname, $lname)
@@ -235,7 +234,6 @@ function get_predefined_user($fname, $lname)
   $i = 0;
   $number = 1;
   $connectionObject = new DB\connection();
-  $connectionObject->connectionAttempt();
   while ($i < $number) {
     $post_query = <<<EOF
 USE fitnessApp;
@@ -244,14 +242,13 @@ EOF;
     $connectionObject->initiateQueries()->multi_query($post_query);
     $i++;
   }
-  inject_random_workouts($number = 1);
   $connectionObject->closeConnection();
+  inject_random_workouts($number = 1);
 }
 
 function inject_random_workouts($number)
 {
   $connectionObject = new DB\connection();
-  $connectionObject->connectionAttempt();
   $get_query = <<<EOF
 SELECT * FROM users
 WHERE updated_at > (now() - INTERVAL 1 SECOND)
@@ -273,6 +270,7 @@ EOF;
 EOF;
     $connectionObject->initiateQueries()->query($post_workout_query);
   }
+  $connectionObject->closeConnection();
 }
 
 ?>
