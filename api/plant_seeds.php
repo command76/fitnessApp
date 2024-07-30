@@ -1,10 +1,7 @@
 <?php
-require dirname(__FILE__, 2) . "/connection.php";
-use dbconnecting as DB;
 
-function get_random_users($number)
+function get_random_users($number, $connectionObject)
 {
-  $connectionObject = new DB\connection();
   $i = 0;
 
   $generate_last_name = [
@@ -226,14 +223,13 @@ EOF;
     $i++;
   }
   $connectionObject->closeConnection();
-  inject_random_workouts($number);
+  inject_random_workouts($number, $connectionObject);
 }
 
-function get_predefined_user($fname, $lname)
+function get_predefined_user($fname, $lname, $connectionObject)
 {
   $i = 0;
   $number = 1;
-  $connectionObject = new DB\connection();
   while ($i < $number) {
     $post_query = <<<EOF
 USE fitnessApp;
@@ -243,12 +239,12 @@ EOF;
     $i++;
   }
   $connectionObject->closeConnection();
-  inject_random_workouts($number = 1);
+  inject_random_workouts($number = 1, $connectionObject);
 }
 
-function inject_random_workouts($number)
+function inject_random_workouts($number, $connectionObject)
 {
-  $connectionObject = new DB\connection();
+  // $connectionObject = new DB\connection();
   $get_query = <<<EOF
 SELECT * FROM users
 WHERE updated_at > (now() - INTERVAL 1 SECOND)
