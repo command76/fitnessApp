@@ -5,6 +5,7 @@ require dirname(__FILE__, 3) . "/connection.php";
 use dbconnecting as DB;
 require dirname(__FILE__, 2) . "/plant_seeds.php";
 require dirname(__FILE__, 2) . "/remove_seeds.php";
+require dirname(__FILE__, 3) . "/index.php";
 
 // Create Router instance
 $router = new \Bramus\Router\Router();
@@ -86,6 +87,32 @@ $router->delete("/delete_users_by_name/", function () {
       $number,
       $connectionObject
     );
+});
+$router->post("/post_latest_workouts/", function () {
+  $pushups = $_POST["push_ups"];
+  $situps = $_POST["sit_ups"];
+  $dips = $_POST["dips"];
+  $running = $_POST["running"];
+  $jumping_jacks = $_POST["jumping_jacks"];
+  $burpees = $_POST["burpees"];
+  echo $pushups .
+    " Pushup " .
+    $situps .
+    " Situps and Everything else " .
+    $dips .
+    " " .
+    $running .
+    " " .
+    $jumping_jacks .
+    " " .
+    $burpees .
+    " end game";
+  //   $connectionObject = new DB\connection();
+  //   if (preg_match("/[A-Za-z]*/", $fname) && preg_match("/[A-Za-z]*/", $lname)) {
+  //     get_predefined_user($fname, $lname, $connectionObject);
+  //   } else {
+  //     echo "<p>Something went wrong</p>";
+  //   }
 });
 
 // Run it!

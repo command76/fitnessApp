@@ -244,7 +244,6 @@ EOF;
 
 function inject_random_workouts($number, $connectionObject)
 {
-  // $connectionObject = new DB\connection();
   $get_query = <<<EOF
 SELECT * FROM users
 WHERE updated_at > (now() - INTERVAL 1 SECOND)
