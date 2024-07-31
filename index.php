@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<?php
-require "./connection.php";
-use dbconnecting as DB;
-$connectionObject = new DB\connection();
-$connectionObject->connectionAttempt();
-$connectionObject->closeConnection();
+<?php // require "./connection.php";
+// require "./connection.php";
+// require "./connection.php";
+// require "./connection.php";
+// require "./connection.php";
+require dirname(__FILE__, 1) . "/forms/post_workouts.php";
+// use dbconnecting as DB;
+// $connectionObject = new DB\connection();
+// $connectionObject->connectionAttempt();
+// $connectionObject->closeConnection();
 ?>
-<?php echo "<h1>Index</h1>"; ?>
+<?php post_latest_workouts(1, 1); ?>
