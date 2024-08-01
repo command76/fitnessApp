@@ -1,5 +1,6 @@
 <?php
-function post_latest_workouts($user_input, $connectionObject)
+require dirname(__FILE__, 2) . "/api/form_insert_type_queries.php";
+function post_latest_workouts_form()
 {
   echo "<form action='/api/router/post_latest_workouts' method='post'>";
   echo "<div>";
