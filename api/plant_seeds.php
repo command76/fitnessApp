@@ -215,10 +215,9 @@ function get_random_users($number, $connectionObject)
     $last_name = $generate_last_name[rand(0, 99)];
 
     $post_query = <<<EOF
-USE fitnessApp;
 INSERT INTO users (birthday, first_name, last_name, email, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$first_name', '$last_name', '{$first_name}_{$last_name}@famous_star.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
 EOF;
-    $connectionObject->initiateQueries()->multi_query($post_query);
+    $connectionObject->initiateQueries()->query($post_query);
 
     $i++;
   }
@@ -232,10 +231,9 @@ function get_predefined_user($fname, $lname, $connectionObject)
   $number = 1;
   while ($i < $number) {
     $post_query = <<<EOF
-USE fitnessApp;
 INSERT INTO users (birthday, first_name, last_name, email, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$fname', '$lname', '{$fname}_{$lname}@famous_star.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
 EOF;
-    $connectionObject->initiateQueries()->multi_query($post_query);
+    $connectionObject->initiateQueries()->query($post_query);
     $i++;
   }
   $connectionObject->closeConnection();
