@@ -5,7 +5,9 @@ require dirname(__FILE__, 3) . "/connection.php";
 use dbconnecting as DB;
 require dirname(__FILE__, 2) . "/plant_seeds.php";
 require dirname(__FILE__, 2) . "/remove_seeds.php";
+ob_start();
 require dirname(__FILE__, 3) . "/index.php";
+ob_end_clean();
 
 // Create Router instance
 $router = new \Bramus\Router\Router();
@@ -91,11 +93,11 @@ $router->delete("/delete_users_by_name/", function () {
 $router->post("/post_latest_workouts/", function () {
   $connectionObject = new DB\connection();
   $workouts = [
-    "pushups" => $_POST["push_ups"],
-    "situps" => $_POST["sit_ups"],
+    "push_ups" => $_POST["push_ups"],
+    "sit_ups" => $_POST["sit_ups"],
     "dips" => $_POST["dips"],
     "running" => $_POST["running"],
-    "jumpingjacks" => $_POST["jumping_jacks"],
+    "jumping_jacks" => $_POST["jumping_jacks"],
     "burpees" => $_POST["burpees"],
   ];
 

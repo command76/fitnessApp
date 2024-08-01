@@ -1,22 +1,19 @@
 <?php
 function upsert_latest_user_workouts($workouts, $connectionObject)
 {
-  $pushups = $workouts["pushups"];
-  $situps = $workouts["situps"];
-  $dips = $workouts["dips"];
-  $running = $workouts["running"];
-  $jumpingjacks = $workouts["jumpingjacks"];
-  $burpees = $workouts["burpees"];
+  $queriesArray = [];
 
-  $update_workouts_for_a_user_query = <<<EOF
+  foreach ($workouts as $key => $value) {
+    $query = <<<EOF
     UPDATE workouts, users
-    SET push_ups = $pushups, sit_ups = $situps, dips = $dips, running = $running, jumping_jacks = $jumpingjacks, burpees = $burpees
+    SET $key = $value
     WHERE users.first_name = 'Sean' AND users.last_name = 'Fields' AND workouts.active_user_id = users.user_id;
 EOF;
+    is_numeric($value) ? array_push($queriesArray, $query) : null;
+  }
+  $queriesString = implode("", $queriesArray);
 
-  $connectionObject
-    ->initiateQueries()
-    ->query($update_workouts_for_a_user_query);
+  $connectionObject->initiateQueries()->multi_query($queriesString);
 
   $connectionObject->closeConnection();
 }
