@@ -1,4 +1,6 @@
 <?php
+// Limit number inputs to less than 100
+
 // Require composer autoloader
 require dirname(__FILE__, 3) . "/vendor/autoload.php";
 require dirname(__FILE__, 3) . "/connection.php";
@@ -16,7 +18,8 @@ $router = new \Bramus\Router\Router();
 $router->post("/random_users/", function () {
   $connectionObject = new DB\connection();
   $number = $_GET["amount"];
-  return preg_match("/\d{0,9}/", $number)
+  // preg_match("/\d{0,9}/", $number)
+  return is_numeric($number)
     ? get_random_users($number, $connectionObject)
     : "<p>Something went wrong</p>";
 });
@@ -24,7 +27,7 @@ $router->post("/predefined_user/", function () {
   $fname = $_GET["fname"];
   $lname = $_GET["lname"];
   $connectionObject = new DB\connection();
-  if (preg_match("/[A-Za-z]*/", $fname) && preg_match("/[A-Za-z]*/", $lname)) {
+  if (preg_match("/[A-Za-z]+/", $fname) && preg_match("/[A-Za-z]+/", $lname)) {
     get_predefined_user($fname, $lname, $connectionObject);
   } else {
     echo "<p>Something went wrong</p>";
@@ -41,17 +44,20 @@ $router->options("/delete_recent_users/", function () {
   header("Access-Control-Request-Method: DELETE");
   header("Access-Control-Request-Headers: content-type,x-pingother");
   $number = $_GET["amount"];
-  return preg_match("/\d{0,9}/", $number)
+  // preg_match("/\d{0,9}/", $number)
+  return is_numeric($number)
     ? delete_recent_users($number, $connectionObject)
     : "<p>Something went wrong</p>";
 });
 $router->delete("/delete_users_by_name/", function () {
   $connectionObject = new DB\connection();
   $errors = [];
+
   try {
     if (!isset($_GET["amount"])) {
       $number = 1;
-    } elseif (preg_match("/\d\S{0,9}/", $_GET["amount"])) {
+    } elseif (is_numeric($_GET["amount"])) {
+      // preg_match("/\d\S{0,9}/", $_GET["amount"])
       $number = $_GET["amount"];
     } else {
       // Maybe use Error too
@@ -101,7 +107,15 @@ $router->post("/post_latest_workouts/", function () {
     "burpees" => $_POST["burpees"],
   ];
 
-  return upsert_latest_user_workouts($workouts, $connectionObject);
+  try {
+    if (array_search(!null, $workouts)) {
+      upsert_latest_user_workouts($workouts, $connectionObject);
+    } else {
+      throw new Exception("Please enter a numerical value");
+    }
+  } catch (Exception $e) {
+    echo "<p>" . $e->getMessage() . "</p>";
+  }
 });
 
 // Run it!

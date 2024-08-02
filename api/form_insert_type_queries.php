@@ -2,6 +2,7 @@
 function upsert_latest_user_workouts($workouts, $connectionObject)
 {
   $queriesArray = [];
+  //get_class($workouts) === "Exception"
 
   foreach ($workouts as $key => $value) {
     $query = <<<EOF
