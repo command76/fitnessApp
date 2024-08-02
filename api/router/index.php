@@ -1,6 +1,6 @@
 <?php
-// Limit number inputs to less than 100 for tomorrow
 // Start doing front end stuff
+// allow user to login
 
 // Require composer autoloader
 require dirname(__FILE__, 3) . "/vendor/autoload.php";
@@ -24,15 +24,19 @@ $router->post("/random_users/", function () {
     print_r("Please add amount to url params");
     return;
   }
-  return is_numeric($number)
-    ? get_random_users($number, $connectionObject)
-    : print_r("Please add numerical amount");
+  if (!is_numeric($number)) {
+    print_r("Please add numerical amount");
+  } elseif (preg_match("/^\d{0,2}$/", $number) && $number != 0) {
+    get_random_users($number, $connectionObject);
+  } else {
+    print_r("Enter amount between 1 and 99");
+  }
 });
 $router->post("/predefined_user/", function () {
   if (isset($_GET["fname"])) {
     $fname = $_GET["fname"];
   } else {
-     print_r("Add fname to url params with a first name");
+    print_r("Add fname to url params with a first name");
     return;
   }
   if (isset($_GET["lname"])) {
@@ -45,7 +49,7 @@ $router->post("/predefined_user/", function () {
   if (preg_match("/[A-Za-z]+/", $fname) && preg_match("/[A-Za-z]+/", $lname)) {
     get_predefined_user($fname, $lname, $connectionObject);
   } else {
-    print_r(echo "Please add name to fname and/or lname params");
+    print_r("Please add name to fname and/or lname params");
   }
 });
 $router->options("/delete_recent_users/", function () {
@@ -64,9 +68,13 @@ $router->options("/delete_recent_users/", function () {
     print_r("Please add a amount to the url params");
     return;
   }
-  return is_numeric($number)
-    ? delete_recent_users($number, $connectionObject)
-    : print_r("Please add a numerical amount");
+  if (!is_numeric($number)) {
+    print_r("Please add a numerical amount");
+  } elseif (preg_match("/^\d{0,2}$/", $number) && $number != 0) {
+    delete_recent_users($number, $connectionObject);
+  } else {
+    print_r("Enter amount between 0 and 100");
+  }
 });
 $router->delete("/delete_users_by_name/", function () {
   $connectionObject = new DB\connection();
@@ -76,7 +84,9 @@ $router->delete("/delete_users_by_name/", function () {
     if (!isset($_GET["amount"])) {
       $number = 1;
     } elseif (is_numeric($_GET["amount"])) {
-      $number = $_GET["amount"];
+      preg_match("/^\d{0,2}$/", $_GET["amount"]) && $_GET["amount"] != 0
+        ? ($number = $_GET["amount"])
+        : throw new Exception("Please enter amount between 1 and 99");
     } else {
       // Maybe use Error too
       throw new Exception("Please enter a valid number");
