@@ -5,6 +5,8 @@ CREATE TABLE fitnessApp.users (
     first_name VARCHAR(25),
     last_name VARCHAR(25),
     email VARCHAR(254),
+    username VARCHAR(254),
+    password VARCHAR(254),
     updated_at TIMESTAMP,
     created_at TIMESTAMP,
     is_enabled BOOLEAN,

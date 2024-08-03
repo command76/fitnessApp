@@ -3,13 +3,14 @@
 // allow user to login
 
 // Require composer autoloader
+ob_start();
 require dirname(__FILE__, 3) . "/vendor/autoload.php";
 require dirname(__FILE__, 3) . "/connection.php";
 use dbconnecting as DB;
 require dirname(__FILE__, 2) . "/plant_seeds.php";
 require dirname(__FILE__, 2) . "/remove_seeds.php";
-ob_start();
 require dirname(__FILE__, 3) . "/index.php";
+require dirname(__FILE__, 2) . "/authenticate.php";
 ob_end_clean();
 
 // Create Router instance
@@ -144,6 +145,60 @@ $router->post("/post_latest_workouts/", function () {
   } catch (Exception $e) {
     echo "<p>" . $e->getMessage() . "</p>";
   }
+});
+$router->post("/create_new_database/", function () {
+  $connectionObject = new DB\connection();
+  $connectionObject->connectionAttempt();
+  $connectionObject->closeConnection();
+});
+$router->get("/authenticate_from_url_string/", function () {
+  $connectionObject = new DB\connection();
+  try {
+    if (isset($_GET["username"]) && isset($_GET["password"])) {
+      $username = $_GET["username"];
+      $password = $_GET["password"];
+    } else {
+      throw new Exception("Please add a username and/or password");
+    }
+  } catch (Exception $e) {
+    print_r($e->getMessage());
+    return;
+  }
+  try {
+    if (verify_user_exists($username, $connectionObject)[0] > 0) {
+      $stored_hashed_password = verify_user_exists(
+        $username,
+        $connectionObject
+      )[1];
+    } else {
+      throw new Exception("Username not found");
+    }
+  } catch (Exception $e) {
+    print_r($e->getMessage());
+    return;
+  }
+  try {
+    if (password_verify($password, $stored_hashed_password)) {
+      echo "We good dog!";
+    } else {
+      throw new Exception("Please enter correct password");
+    }
+  } catch (Exception $e) {
+    print_r($e->getMessage());
+    return;
+  }
+});
+$router->post("/oauth/", function () {
+  // work on this next
+});
+$router->post("/upload_user_image/", function () {
+  // eventually work on this
+});
+$router->post("/xml_feed_seeds/", function () {
+  // add this eventually
+});
+$router->post("/csv_format_seeds/", function () {
+  // add this eventually
 });
 
 // Run it!
