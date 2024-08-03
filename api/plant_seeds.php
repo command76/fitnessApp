@@ -213,9 +213,12 @@ function get_random_users($number, $connectionObject)
   while ($i < $number) {
     $first_name = $generate_first_name[rand(0, 99)];
     $last_name = $generate_last_name[rand(0, 99)];
+    $username = $first_name . $last_name;
+
+    $password = password_hash("password", PASSWORD_DEFAULT);
 
     $post_query = <<<EOF
-INSERT INTO users (birthday, first_name, last_name, email, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$first_name', '$last_name', '{$first_name}_{$last_name}@famous_star.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
+INSERT INTO users (birthday, first_name, last_name, email, username, password, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$first_name', '$last_name', '{$first_name}_{$last_name}@famous_star.com', '$username', '$password', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
 EOF;
     $connectionObject->initiateQueries()->query($post_query);
 
