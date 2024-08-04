@@ -17,6 +17,19 @@ ob_end_clean();
 $router = new \Bramus\Router\Router();
 
 // Define routes
+$router->get("/", function () {
+  header("Location: /");
+});
+$router->get("/users/{user}", function ($user) {
+  // trying to get url path and use it in the page
+  // trying to get route to push data onto the page
+  if (!isset($user)) {
+    "not logged in";
+    return;
+  } else {
+    is_enabled($user);
+  }
+});
 $router->post("/random_users/", function () {
   $connectionObject = new DB\connection();
   if (isset($_GET["amount"])) {
@@ -190,6 +203,14 @@ $router->get("/authenticate_from_url_string/", function () {
 });
 $router->post("/oauth/", function () {
   // work on this next
+});
+$router->post("/register/", function () {
+  $user = "blah";
+
+  header("Location: /api/router/user/$user");
+});
+$router->get("/user/{user}", function ($user) {
+  echo $user;
 });
 $router->post("/upload_user_image/", function () {
   // eventually work on this
