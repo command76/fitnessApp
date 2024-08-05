@@ -225,12 +225,7 @@ EOF;
     $i++;
   }
   $connectionObject->closeConnection();
-<<<<<<< Updated upstream:models/seeds/plant_seeds.php
   inject_random_workouts($number, $connectionObject);
-=======
-
-  inject_random_workouts($number);
->>>>>>> Stashed changes:api/plant_seeds.php
 }
 
 function get_predefined_user($fname, $lname, $connectionObject)
@@ -248,12 +243,7 @@ EOF;
     $i++;
   }
   $connectionObject->closeConnection();
-<<<<<<< Updated upstream:models/seeds/plant_seeds.php
   inject_random_workouts($number = 1, $connectionObject);
-=======
-
-  inject_random_workouts($number = 1);
->>>>>>> Stashed changes:api/plant_seeds.php
 }
 
 function inject_random_workouts($number, $connectionObject)
