@@ -1,8 +1,8 @@
 <?php
-require dirname(__FILE__, 2) . "/api/form_insert_type_queries.php";
+require dirname(__FILE__, 3) . "/models/users/form_insert_type_queries.php";
 function post_latest_workouts_form()
 {
-  echo "<form action='/api/router/post_latest_workouts' method='post'>";
+  echo "<form action='/api/router/models/users/post_latest_workouts' method='post'>";
   echo "<fieldset>";
   echo "<legend>Post Latest Workouts</legend>";
   echo "<div>";
