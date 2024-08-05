@@ -2,6 +2,16 @@
 
 function get_random_users($number, $connectionObject)
 {
+  if (!is_numeric($number)) {
+    print_r("Please add numerical amount");
+    return;
+  } elseif (preg_match("/^\d{0,2}$/", $number) && $number != 0) {
+    $number = $number;
+  } else {
+    print_r("Enter amount between 1 and 99");
+    return;
+  }
+
   $i = 0;
 
   $generate_last_name = [
@@ -230,20 +240,26 @@ EOF;
 
 function get_predefined_user($fname, $lname, $connectionObject)
 {
+  // address why special characters are being passed like letters
   $i = 0;
   $number = 1;
-  $username = $fname . $lname;
 
-  $password = password_hash("password", PASSWORD_DEFAULT);
-  while ($i < $number) {
-    $post_query = <<<EOF
+  if (preg_match("/[A-Za-z]+/", $fname) && preg_match("/[A-Za-z]+/", $lname)) {
+    $username = $fname . $lname;
+
+    $password = password_hash("password", PASSWORD_DEFAULT);
+    while ($i < $number) {
+      $post_query = <<<EOF
 INSERT INTO users (birthday, first_name, last_name, email, username, password, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('2005-12-02', '$fname', '$lname', '{$fname}_{$lname}@famous_star.com',  '$username', '$password', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 'before_weight_loss.jpg', 'after_weight_loss.jpg');
 EOF;
-    $connectionObject->initiateQueries()->query($post_query);
-    $i++;
+      $connectionObject->initiateQueries()->query($post_query);
+      $i++;
+    }
+    $connectionObject->closeConnection();
+    inject_random_workouts($number = 1, $connectionObject);
+  } else {
+    print_r("Please add name to fname and/or lname params");
   }
-  $connectionObject->closeConnection();
-  inject_random_workouts($number = 1, $connectionObject);
 }
 
 function inject_random_workouts($number, $connectionObject)
