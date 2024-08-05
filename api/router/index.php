@@ -27,47 +27,27 @@ $router = new \Bramus\Router\Router();
 $router->get("/", function () {
   header("Location: /");
 });
-
+$router->get("/logged_in/{user}", function ($user) {
+  echo "logged in" . $user;
+});
+$router->before("GET", "/logged_in/{user}", function () {
+  $connectionObject = new DB\connection();
+  // Store session here
+});
 $router->mount("/models", function () use ($router) {
   $router->mount("/seeds", function () use ($router) {
     $router->post("/random_users/", function () {
       $connectionObject = new DB\connection();
-      if (isset($_GET["amount"])) {
-        $number = $_GET["amount"];
-      } else {
-        print_r("Please add amount to url params");
-        return;
-      }
-      if (!is_numeric($number)) {
-        print_r("Please add numerical amount");
-      } elseif (preg_match("/^\d{0,2}$/", $number) && $number != 0) {
-        get_random_users($number, $connectionObject);
-      } else {
-        print_r("Enter amount between 1 and 99");
-      }
+      isset($_GET["amount"])
+        ? get_random_users($_GET["amount"], $connectionObject)
+        : print_r("Please add amount to URL params");
     });
     $router->post("/predefined_user/", function () {
-      if (isset($_GET["fname"])) {
-        $fname = $_GET["fname"];
-      } else {
-        print_r("Add fname to url params with a first name");
-        return;
-      }
-      if (isset($_GET["lname"])) {
-        $lname = $_GET["lname"];
-      } else {
-        print_r("Add lname url params with last name");
-        return;
-      }
       $connectionObject = new DB\connection();
-      if (
-        preg_match("/[A-Za-z]+/", $fname) &&
-        preg_match("/[A-Za-z]+/", $lname)
-      ) {
-        get_predefined_user($fname, $lname, $connectionObject);
-      } else {
-        print_r("Please add name to fname and/or lname params");
-      }
+
+      isset($_GET["fname"]) && isset($_GET["lname"])
+        ? get_predefined_user($_GET["fname"], $_GET["lname"], $connectionObject)
+        : print_r("Please add fname and/or lname to url params");
     });
     $router->options("/delete_recent_users/", function () {
       $connectionObject = new DB\connection();
@@ -79,66 +59,22 @@ $router->mount("/models", function () use ($router) {
       header("Origin: https://localhost:8888");
       header("Access-Control-Request-Method: DELETE");
       header("Access-Control-Request-Headers: content-type,x-pingother");
-      if (isset($_GET["amount"])) {
-        $number = $_GET["amount"];
-      } else {
-        print_r("Please add a amount to the url params");
-        return;
-      }
-      if (!is_numeric($number)) {
-        print_r("Please add a numerical amount");
-      } elseif (preg_match("/^\d{0,2}$/", $number) && $number != 0) {
-        delete_recent_users($number, $connectionObject);
-      } else {
-        print_r("Enter amount between 0 and 100");
-      }
+      isset($_GET["amount"])
+        ? delete_recent_users($_GET["amount"], $connectionObject)
+        : print_r("Please add a amount to the url params");
     });
     $router->delete("/delete_users_by_name/", function () {
       $connectionObject = new DB\connection();
-      $errors = [];
+      !isset($_GET["amount"]) ? ($amount = 1) : ($amount = $_GET["amount"]);
 
-      try {
-        if (!isset($_GET["amount"])) {
-          $number = 1;
-        } elseif (is_numeric($_GET["amount"])) {
-          preg_match("/^\d{0,2}$/", $_GET["amount"]) && $_GET["amount"] != 0
-            ? ($number = $_GET["amount"])
-            : throw new Exception("Please enter amount between 1 and 99");
-        } else {
-          // Maybe use Error too
-          throw new Exception("Please enter a valid number");
-        }
-      } catch (Exception $e) {
-        array_push($errors, $e->getMessage());
-      }
-      try {
-        if (!isset($_GET["first_name"])) {
-          throw new Exception("Please enter a first name");
-        } elseif (preg_match("/[A-Za-z]+/", $_GET["first_name"])) {
-          $fname = $_GET["first_name"];
-        } else {
-          throw new Exception("Enter a valid name");
-        }
-      } catch (Exception $e) {
-        array_push($errors, $e->getMessage());
-      }
-      try {
-        if (!isset($_GET["last_name"])) {
-          throw new Exception("Please enter a last name");
-        } elseif (preg_match("/[A-Za-z]+/", $_GET["last_name"])) {
-          $lname = $_GET["last_name"];
-        } else {
-          throw new Exception("Enter a valid name");
-        }
-      } catch (Exception $e) {
-        array_push($errors, $e->getMessage());
-      }
-      return count($errors) > 0
-        ? print_r($errors)
-        : delete_users_by_name(
-          $name = [$fname, $lname],
-          $number,
+      isset($_GET["first_name"]) && isset($_GET["last_name"])
+        ? delete_users_by_name(
+          [$_GET["first_name"], $_GET["last_name"]],
+          $amount,
           $connectionObject
+        )
+        : print_r(
+          "Please enter first_name and/or last_name and/or optionally amount into the url params"
         );
     });
     $router->post("/create_new_database/", function () {
@@ -173,40 +109,9 @@ $router->mount("/models", function () use ($router) {
 });
 $router->get("/authenticate_from_url_string/", function () {
   $connectionObject = new DB\connection();
-  try {
-    if (isset($_GET["username"]) && isset($_GET["password"])) {
-      $username = $_GET["username"];
-      $password = $_GET["password"];
-    } else {
-      throw new Exception("Please add a username and/or password");
-    }
-  } catch (Exception $e) {
-    print_r($e->getMessage());
-    return;
-  }
-  try {
-    if (verify_user_exists($username, $connectionObject)[0] > 0) {
-      $stored_hashed_password = verify_user_exists(
-        $username,
-        $connectionObject
-      )[1];
-    } else {
-      throw new Exception("Username not found");
-    }
-  } catch (Exception $e) {
-    print_r($e->getMessage());
-    return;
-  }
-  try {
-    if (password_verify($password, $stored_hashed_password)) {
-      echo "We good dog!";
-    } else {
-      throw new Exception("Please enter correct password");
-    }
-  } catch (Exception $e) {
-    print_r($e->getMessage());
-    return;
-  }
+  isset($_GET["username"]) && isset($_GET["password"])
+    ? authenticate($_GET["username"], $_GET["password"], $connectionObject)
+    : print_r("Please add username and password to url params");
 });
 $router->post("/oauth/", function () {
   // work on this next
