@@ -1,4 +1,5 @@
 <?php
+// tomorrow work on logging into the app
 // Start doing front end stuff
 // allow user to login
 
@@ -25,15 +26,34 @@ $router = new \Bramus\Router\Router();
 
 // Define routes
 $router->get("/", function () {
-  header("Location: /");
+  header("Location: /pages/login/login.php");
 });
-$router->get("/logged_in/{user}", function ($user) {
-  echo "logged in" . $user;
+$router->get("/registration_page/", function () {
+  header("Location: /pages/register/register.php");
+});
+$router->mount("/logged_in/", function () use ($router) {
+  $router->get("/{user}", function ($user) {
+    header("Location: /pages/user/dashboard.php");
+  });
+  $router->get("/{user}/workouts", function ($user) {
+    header("Location: /pages/user/user_workouts_home.php");
+  });
 });
 $router->before("GET", "/logged_in/{user}", function () {
   $connectionObject = new DB\connection();
   // Store session here
 });
+$router->mount("/authenticate/", function () use ($router) {
+  $router->get("/from_url_string/", function () {
+    $connectionObject = new DB\connection();
+    isset($_GET["username"]) && isset($_GET["password"])
+      ? authenticate($_GET["username"], $_GET["password"], $connectionObject)
+      : print_r("Please add username and password to url params");
+  });
+  $router->post("/oauth/", function () {
+    // work on this next
+  });
+})
 $router->mount("/models", function () use ($router) {
   $router->mount("/seeds", function () use ($router) {
     $router->post("/random_users/", function () {
@@ -82,6 +102,12 @@ $router->mount("/models", function () use ($router) {
       $connectionObject->connectionAttempt();
       $connectionObject->closeConnection();
     });
+    $router->post("/xml_feed_seeds/", function () {
+      // add this eventually
+    });
+    $router->post("/csv_format_seeds/", function () {
+      // add this eventually
+    });
   });
   $router->mount("/users", function () use ($router) {
     $router->post("/post_latest_workouts/", function () {
@@ -105,31 +131,17 @@ $router->mount("/models", function () use ($router) {
         echo "<p>" . $e->getMessage() . "</p>";
       }
     });
+    $router->post("/register_new_user/", function () {
+
+      header("Location: /api/router/logged_in")
+    });
+    $router->post("/upload_user_after_image/", function () {
+      // is_image()
+    });
   });
 });
-$router->get("/authenticate_from_url_string/", function () {
-  $connectionObject = new DB\connection();
-  isset($_GET["username"]) && isset($_GET["password"])
-    ? authenticate($_GET["username"], $_GET["password"], $connectionObject)
-    : print_r("Please add username and password to url params");
-});
-$router->post("/oauth/", function () {
-  // work on this next
-});
-$router->post("/register/", function () {
-  $user = "blah";
 
-  header("Location: /api/router/user/$user");
-});
-$router->post("/upload_user_image/", function () {
-  // eventually work on this
-});
-$router->post("/xml_feed_seeds/", function () {
-  // add this eventually
-});
-$router->post("/csv_format_seeds/", function () {
-  // add this eventually
-});
+
 
 // Run it!
 $router->run();
