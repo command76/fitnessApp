@@ -1,14 +1,10 @@
 <!DOCTYPE html>
-<?php
-require dirname(__FILE__, 1) . "/components/forms/post_workouts.php";
-require dirname(__FILE__, 1) . "/components/forms/register.php";
+<?php require dirname(__FILE__, 1) . "/pages/login/login.php"; ?>
 
-// require dirname(__FILE__, 1) . "/controllers/users/user.php";
-
-// require dirname(__FILE__, 1) . "/sections/user/user_contents.php";
-?>
-
-<?php registration_form(); ?>
-<?php // isEnabled();
-
-post_latest_workouts_form(); //display_user_stuff(); ?>
+<?php if (isset($username)) {
+  echo "<h1>Hello $username</h1>";
+  echo "<p><a href='/api/router/logged_in/$username/workouts'>Wanna update your workouts?</a></p>";
+} else {
+  login();
+  echo "<a href='/api/router/registration_page'>Create an account</a>";
+} ?>

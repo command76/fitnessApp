@@ -1,17 +1,11 @@
 <?php
+// for executing user based functions
 namespace controllers;
 class user
 {
   public function isEnabled()
   {
-    // echo $user;
-    // if ($user) {
-    echo "WHWHWHW";
-    return true;
-    // } else {
-    echo "SDSDSDSD";
-    return false;
-    // }
+    return true
   }
   public function test($test)
   {

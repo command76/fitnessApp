@@ -2,7 +2,7 @@
 
 function registration_form()
 {
-  echo "<form action='/api/router/register' method='post'>";
+  echo "<form action='/api/router/models/users/register_new_user' method='post' enctype='multipart/form-data'>";
   echo "<fieldset>";
   echo "<legend>Register a new account</legend>";
   echo "<div>";
@@ -18,8 +18,8 @@ function registration_form()
   echo "<input type='email' name='email' id='email' value='email' placeholder='enter email'/>";
   echo "</div>";
   echo "<div>";
-  echo "<label>Before Pic</label>";
-  echo "<input type='text' name='before_pic' id='before_pic' value='Before Picture' placeholder='Upload pic of current physique'/>";
+  echo "<label>Upload Before Pic</label>";
+  echo "<input type='file' name='before_pic' id='before_pic' accept='image/png, image/jpeg'>";
   echo "</div>";
   echo "<div>";
   echo "<label>Username</label>";
