@@ -28,4 +28,12 @@ EOF;
   $connectionObject->closeConnection();
 }
 
+function register_new_user($user_inputs, $connectionObject)
+{
+  $errorsArray = [];
+  foreach ($user_inputs as $input) {
+    echo $input;
+  }
+}
+
 ?>

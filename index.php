@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?php require dirname(__FILE__, 1) . "/pages/login/login.php"; ?>
+<?php require dirname(__FILE__, 1) . "/components/forms/login.php"; ?>
 
 <?php if (isset($username)) {
   echo "<h1>Hello $username</h1>";

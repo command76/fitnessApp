@@ -1,6 +1,4 @@
 <?php
-function login()
-{
-  echo "<h1>Login</h1>";
-}
+require dirname(__FILE__, 3) . "/components/forms/login.php";
+login();
 ?>
