@@ -28,4 +28,16 @@ EOF;
   $connectionObject->closeConnection();
 }
 
+<<<<<<< Updated upstream
+=======
+function register_new_user($user_inputs, $connectionObject)
+{
+  $errorsArray = [];
+  print_r($user_inputs);
+  foreach ($user_inputs as $input) {
+    echo $input;
+  }
+}
+
+>>>>>>> Stashed changes
 ?>
