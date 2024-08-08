@@ -1,5 +1,20 @@
 <?php
 
+function before_pic()
+{
+  echo "<form action='/assets/upload.php' method='post' enctype='multipart/form-data'>";
+  echo "<fieldset>";
+  echo "<div>";
+  echo "<label>Upload Before Pic</label>";
+  echo "<input type='file' name='fileToUpload' id='fileToUpload' accept='image/png, image/jpeg'>";
+  echo "</div>";
+  echo "<div>";
+  echo "<input type='submit' value='submit' id='submit' name='submit'/>";
+  echo "</div>";
+  echo "</fieldset>";
+  echo "</form>";
+}
+
 function registration_form()
 {
   echo "<form action='/api/router/models/users/register_new_user' method='post' enctype='multipart/form-data'>";
@@ -15,11 +30,7 @@ function registration_form()
   echo "</div>";
   echo "<div>";
   echo "<label>Email</label>";
-  echo "<input type='email' name='email' id='email' value='email' placeholder='enter email'/>";
-  echo "</div>";
-  echo "<div>";
-  echo "<label>Upload Before Pic</label>";
-  echo "<input type='file' name='before_pic' id='before_pic' accept='image/png, image/jpeg'>";
+  echo "<input type='email' name='email' id='email' placeholder='enter email'/>";
   echo "</div>";
   echo "<div>";
   echo "<label>Username</label>";

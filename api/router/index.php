@@ -53,7 +53,7 @@ $router->mount("/authenticate/", function () use ($router) {
   $router->post("/oauth/", function () {
     // work on this next
   });
-})
+});
 $router->mount("/models", function () use ($router) {
   $router->mount("/seeds", function () use ($router) {
     $router->post("/random_users/", function () {
@@ -132,16 +132,68 @@ $router->mount("/models", function () use ($router) {
       }
     });
     $router->post("/register_new_user/", function () {
+      try {
+        if (isset($_POST["last_name"])) {
+          $userInput["last_name"] = $_POST["last_name"];
+        } else {
+          throw new Exception("Please enter last name");
+        }
+      } catch (Exception $e) {
+        array_push($errorArray, $e->getMessage());
+      }
 
-      header("Location: /api/router/logged_in")
-    });
-    $router->post("/upload_user_after_image/", function () {
-      // is_image()
+      try {
+        if (isset($_POST["email"])) {
+          $userInput["email"] = $_POST["email"];
+        } else {
+          throw new Exception("Please enter email");
+        }
+      } catch (Exception $e) {
+        array_push($errorArray, $e->getMessage());
+      }
+
+      // try {
+      //   if (isset($_FILES["before_pic"]["name"])) {
+      //     $userInput["before_pic"] = $_FILES["before_pic"]["tmp_name"];
+      //   } else {
+      //     throw new Exception("Please enter before pic");
+      //   }
+      // } catch (Exception $e) {
+      //   array_push($errorArray, $e->getMessage());
+      // }
+
+      try {
+        if (isset($_POST["username"])) {
+          $userInput["username"] = $_POST["username"];
+        } else {
+          throw new Exception("Please enter a username");
+        }
+      } catch (Exception $e) {
+        array_push($errorArray, $e->getMessage());
+      }
+
+      try {
+        if (isset($_POST["password"])) {
+          $userInput["password"] = $_POST["password"];
+        } else {
+          throw new Exception("Please enter a password");
+        }
+      } catch (Exception $e) {
+        array_push($errorArray, $e->getMessage());
+      }
+
+      if (count($errorArray) > 0) {
+        $userInput = $errorArray;
+      }
+      register_new_user($userInput, $connectionObject);
+      // header("Location: /api/router/logged_in");
     });
   });
 });
-
-
+$router->post("/assets/upload_image/", function () {
+  header("Location: /assets/upload.php");
+  // is_image()
+});
 
 // Run it!
 $router->run();

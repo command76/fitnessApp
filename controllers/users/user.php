@@ -5,7 +5,7 @@ class user
 {
   public function isEnabled()
   {
-    return true
+    return true;
   }
   public function test($test)
   {
