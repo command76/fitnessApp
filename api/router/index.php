@@ -53,7 +53,7 @@ $router->mount("/authenticate/", function () use ($router) {
   $router->post("/oauth/", function () {
     // work on this next
   });
-})
+});
 $router->mount("/models", function () use ($router) {
   $router->mount("/seeds", function () use ($router) {
     $router->post("/random_users/", function () {
@@ -132,10 +132,6 @@ $router->mount("/models", function () use ($router) {
       }
     });
     $router->post("/register_new_user/", function () {
-
-<<<<<<< Updated upstream
-      header("Location: /api/router/logged_in")
-=======
       try {
         if (isset($_POST["last_name"])) {
           $userInput["last_name"] = $_POST["last_name"];
@@ -191,10 +187,6 @@ $router->mount("/models", function () use ($router) {
       }
       register_new_user($userInput, $connectionObject);
       // header("Location: /api/router/logged_in");
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     });
   });
 });
@@ -202,11 +194,6 @@ $router->post("/assets/upload_image/", function () {
   header("Location: /assets/upload.php");
   // is_image()
 });
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 
 // Run it!
 $router->run();
