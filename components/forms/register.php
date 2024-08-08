@@ -30,7 +30,11 @@ function registration_form()
   echo "</div>";
   echo "<div>";
   echo "<label>Email</label>";
+<<<<<<< Updated upstream
   echo "<input type='email' name='email' id='email' value='email' placeholder='enter email'/>";
+=======
+  echo "<input type='email' name='email' id='email' placeholder='enter email'/>";
+>>>>>>> Stashed changes
   echo "</div>";
   echo "<div>";
   echo "<label>Username</label>";

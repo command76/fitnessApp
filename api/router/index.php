@@ -191,6 +191,9 @@ $router->mount("/models", function () use ($router) {
       }
       register_new_user($userInput, $connectionObject);
       // header("Location: /api/router/logged_in");
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     });
   });
@@ -199,8 +202,11 @@ $router->post("/assets/upload_image/", function () {
   header("Location: /assets/upload.php");
   // is_image()
 });
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 
 // Run it!
 $router->run();
