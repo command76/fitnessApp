@@ -1,6 +1,6 @@
 <?php
 
-function before_pic()
+function update_progress_picture()
 {
   echo "<form action='/assets/upload.php' method='post' enctype='multipart/form-data'>";
   echo "<fieldset>";
@@ -33,6 +33,10 @@ function registration_form()
   echo "<input type='email' name='email' id='email' placeholder='enter email'/>";
   echo "</div>";
   echo "<div>";
+  echo "<label>Upload Before Pic</label>";
+  echo "<input type='file' name='fileToUpload' id='fileToUpload' accept='image/png, image/jpeg'>";
+  echo "</div>";
+  echo "<div>";
   echo "<label>Username</label>";
   echo "<input type='text' name='username' id='username' value='username' placeholder='enter a username'/>";
   echo "</div>";
@@ -41,7 +45,7 @@ function registration_form()
   echo "<input type='text' name='password' id='password' value='password' placeholder='enter a password'/>";
   echo "</div>";
   echo "<div>";
-  echo "<input type='submit' value='submit' />";
+  echo "<input type='submit' value='submit' id='submit' name='submit' />";
   echo "</div>";
   echo "</fieldset>";
   echo "</form>";
