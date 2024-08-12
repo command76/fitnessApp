@@ -139,20 +139,62 @@ $router->mount("/models", function () use ($router) {
       $connectionObject = new DB\connection();
       $errorArray = [];
       $userInput = [];
-      $target_dir = dirname(__FILE__, 3) . "/assets/uploads/";
-      $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-      $uploadOk = 1;
-      $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
       if (isset($_POST["submit"])) {
-        // echo "FUCKING SUBMIT ";
-        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-        if ($check !== false) {
-          echo "File is an image - " . $check["mime"] . ".";
-          $uploadOk = 1;
-          move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file);
-        } else {
-          echo "File is not an image.";
-          $uploadOk = 0;
+        try {
+          if (isset($_FILES["fileToUpload"]["name"])) {
+            if ($_FILES["fileToUpload"]["name"] != null) {
+              $target_dir = dirname(__FILE__, 3) . "/assets/uploads/";
+              $target_file =
+                $target_dir . basename($_FILES["fileToUpload"]["name"]);
+              $uploadOk = 1;
+              $imageFileType = strtolower(
+                pathinfo($target_file, PATHINFO_EXTENSION)
+              );
+              $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+
+              if ($check !== false) {
+                echo "File is an image - " . $check["mime"] . ".";
+                $uploadOk = 1;
+                move_uploaded_file(
+                  $_FILES["fileToUpload"]["tmp_name"],
+                  $target_file
+                );
+                $userInput["before_pic"] =
+                  $_SERVER["SERVER_NAME"] .
+                  ":" .
+                  $_SERVER["SERVER_PORT"] .
+                  "/assets/uploads/" .
+                  $_FILES["fileToUpload"]["name"];
+              } else {
+                echo "File is not an image.";
+                throw new Exception("File is not an image");
+                $uploadOk = 0;
+              }
+            } else {
+              return throw new Exception("Please enter before pic");
+            }
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
+        }
+        try {
+          if (isset($_POST["birthday"])) {
+            $userInput["birthday"] = $_POST["birthday"];
+          } else {
+            throw new Exception("Please enter birthday");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
+        }
+
+        try {
+          if (isset($_POST["first_name"])) {
+            $userInput["first_name"] = $_POST["first_name"];
+          } else {
+            throw new Exception("Please enter first name");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
         }
 
         try {
@@ -170,16 +212,6 @@ $router->mount("/models", function () use ($router) {
             $userInput["email"] = $_POST["email"];
           } else {
             throw new Exception("Please enter email");
-          }
-        } catch (Exception $e) {
-          array_push($errorArray, $e->getMessage());
-        }
-
-        try {
-          if (isset($_FILES["fileToUpload"]["name"])) {
-            $userInput["fileToUpload"] = $_FILES["fileToUpload"]["tmp_name"];
-          } else {
-            throw new Exception("Please enter before pic");
           }
         } catch (Exception $e) {
           array_push($errorArray, $e->getMessage());
@@ -209,7 +241,7 @@ $router->mount("/models", function () use ($router) {
           $userInput = $errorArray;
         }
         register_new_user($userInput, $connectionObject);
-        header("Location: /api/router/logged_in/$userInput[username]");
+        // header("Location: /api/router/logged_in/$userInput[username]");
       } else {
         echo "NOOOO!";
       }
