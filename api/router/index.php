@@ -13,6 +13,7 @@ require dirname(__FILE__, 3) . "/models/seeds/remove_seeds.php";
 require dirname(__FILE__, 3) . "/controllers/users/user.php";
 require dirname(__FILE__, 3) . "/index.php";
 require dirname(__FILE__, 3) . "/controllers/login/authenticate.php";
+require dirname(__FILE__, 3) . "/models/users/form_insert_type_queries.php";
 ob_end_clean();
 
 // Create Router instance
@@ -31,18 +32,21 @@ $router->get("/", function () {
 $router->get("/registration_page/", function () {
   header("Location: /pages/register/register.php");
 });
-$router->mount("/logged_in/", function () use ($router) {
-  $router->get("/{user}", function ($user) {
+$router->mount("/logged_in", function () use ($router) {
+  $router->get("/", function () {
     header("Location: /pages/user/dashboard.php");
   });
   $router->get("/{user}/workouts", function ($user) {
     header("Location: /pages/user/user_workouts_home.php");
   });
+  $router->get("/{user}/progress_pictures", function ($user) {
+    header("Location: /pages/user/progress_pictures.php");
+  });
 });
-$router->before("GET", "/logged_in/{user}", function () {
-  $connectionObject = new DB\connection();
-  // Store session here
-});
+// $router->before("GET", "/logged_in/{user}", function () {
+//   $connectionObject = new DB\connection();
+//   // Store session here
+// });
 $router->mount("/authenticate/", function () use ($router) {
   $router->get("/from_url_string/", function () {
     $connectionObject = new DB\connection();
@@ -132,67 +136,120 @@ $router->mount("/models", function () use ($router) {
       }
     });
     $router->post("/register_new_user/", function () {
-      try {
-        if (isset($_POST["last_name"])) {
-          $userInput["last_name"] = $_POST["last_name"];
-        } else {
-          throw new Exception("Please enter last name");
+      $connectionObject = new DB\connection();
+      $errorArray = [];
+      $userInput = [];
+      if (isset($_POST["submit"])) {
+        try {
+          if (isset($_FILES["fileToUpload"]["name"])) {
+            if ($_FILES["fileToUpload"]["name"] != null) {
+              $target_dir = dirname(__FILE__, 3) . "/assets/uploads/";
+              $target_file =
+                $target_dir . basename($_FILES["fileToUpload"]["name"]);
+              $uploadOk = 1;
+              $imageFileType = strtolower(
+                pathinfo($target_file, PATHINFO_EXTENSION)
+              );
+              $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+
+              if ($check !== false) {
+                echo "File is an image - " . $check["mime"] . ".";
+                $uploadOk = 1;
+                move_uploaded_file(
+                  $_FILES["fileToUpload"]["tmp_name"],
+                  $target_file
+                );
+                $userInput["before_pic"] =
+                  $_SERVER["SERVER_NAME"] .
+                  ":" .
+                  $_SERVER["SERVER_PORT"] .
+                  "/assets/uploads/" .
+                  $_FILES["fileToUpload"]["name"];
+              } else {
+                echo "File is not an image.";
+                throw new Exception("File is not an image");
+                $uploadOk = 0;
+              }
+            } else {
+              return throw new Exception("Please enter before pic");
+            }
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
         }
-      } catch (Exception $e) {
-        array_push($errorArray, $e->getMessage());
-      }
-
-      try {
-        if (isset($_POST["email"])) {
-          $userInput["email"] = $_POST["email"];
-        } else {
-          throw new Exception("Please enter email");
+        try {
+          if (isset($_POST["birthday"])) {
+            $userInput["birthday"] = $_POST["birthday"];
+          } else {
+            throw new Exception("Please enter birthday");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
         }
-      } catch (Exception $e) {
-        array_push($errorArray, $e->getMessage());
-      }
 
-      // try {
-      //   if (isset($_FILES["before_pic"]["name"])) {
-      //     $userInput["before_pic"] = $_FILES["before_pic"]["tmp_name"];
-      //   } else {
-      //     throw new Exception("Please enter before pic");
-      //   }
-      // } catch (Exception $e) {
-      //   array_push($errorArray, $e->getMessage());
-      // }
-
-      try {
-        if (isset($_POST["username"])) {
-          $userInput["username"] = $_POST["username"];
-        } else {
-          throw new Exception("Please enter a username");
+        try {
+          if (isset($_POST["first_name"])) {
+            $userInput["first_name"] = $_POST["first_name"];
+          } else {
+            throw new Exception("Please enter first name");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
         }
-      } catch (Exception $e) {
-        array_push($errorArray, $e->getMessage());
-      }
 
-      try {
-        if (isset($_POST["password"])) {
-          $userInput["password"] = $_POST["password"];
-        } else {
-          throw new Exception("Please enter a password");
+        try {
+          if (isset($_POST["last_name"])) {
+            $userInput["last_name"] = $_POST["last_name"];
+          } else {
+            throw new Exception("Please enter last name");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
         }
-      } catch (Exception $e) {
-        array_push($errorArray, $e->getMessage());
-      }
 
-      if (count($errorArray) > 0) {
-        $userInput = $errorArray;
+        try {
+          if (isset($_POST["email"])) {
+            $userInput["email"] = $_POST["email"];
+          } else {
+            throw new Exception("Please enter email");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
+        }
+
+        try {
+          if (isset($_POST["username"])) {
+            $userInput["username"] = $_POST["username"];
+          } else {
+            throw new Exception("Please enter a username");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
+        }
+
+        try {
+          if (isset($_POST["password"])) {
+            $userInput["password"] = $_POST["password"];
+          } else {
+            throw new Exception("Please enter a password");
+          }
+        } catch (Exception $e) {
+          array_push($errorArray, $e->getMessage());
+        }
+
+        if (count($errorArray) > 0) {
+          $userInput = $errorArray;
+        }
+        register_new_user($userInput, $connectionObject);
+        // header("Location: /api/router/logged_in/$userInput[username]");
+      } else {
+        echo "NOOOO!";
       }
-      register_new_user($userInput, $connectionObject);
-      // header("Location: /api/router/logged_in");
     });
   });
 });
-$router->post("/assets/upload_image/", function () {
+$router->post("/assets/progress_image/", function () {
   header("Location: /assets/upload.php");
-  // is_image()
 });
 
 // Run it!

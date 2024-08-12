@@ -28,16 +28,26 @@ EOF;
   $connectionObject->closeConnection();
 }
 
-<<<<<<< Updated upstream
-=======
 function register_new_user($user_inputs, $connectionObject)
 {
-  $errorsArray = [];
-  print_r($user_inputs);
-  foreach ($user_inputs as $input) {
-    echo $input;
-  }
+  // look at plant_seeds.php for example of inserting new user
+
+  $password = password_hash($user_inputs["password"], PASSWORD_DEFAULT);
+  $birthday = date("Y-m-d H:i:s", strtotime($user_inputs["birthday"]));
+  $register_new_user_query = <<<EOF
+  INSERT INTO users (birthday, first_name, last_name, email, username, password, updated_at, created_at, is_enabled, before_pic, after_pic) VALUES ('$birthday', '$user_inputs[first_name]', '$user_inputs[last_name]', '$user_inputs[email]', '$user_inputs[username]', '$password', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, '$user_inputs[before_pic]', 'after_pic.jpg');        
+EOF;
+  $connectionObject->initiateQueries()->query($register_new_user_query);
+  $connectionObject->closeConnection();
+
+  $create_new_user_for_workouts = <<<EOF
+  INSERT INTO workouts (active_user_id)
+  SELECT user_id FROM users
+  WHERE users.first_name = '$user_inputs[first_name]' AND users.last_name= '$user_inputs[last_name]' AND updated_at > (now() - INTERVAL 10 SECOND)
+EOF;
+
+  $connectionObject->initiateQueries()->query($create_new_user_for_workouts);
+  $connectionObject->closeConnection();
 }
 
->>>>>>> Stashed changes
 ?>

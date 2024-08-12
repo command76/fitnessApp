@@ -12,5 +12,9 @@ class user
     echo "testing";
     echo $test;
   }
+  public function get_user_image()
+  {
+    return true;
+  }
 }
 ?>
