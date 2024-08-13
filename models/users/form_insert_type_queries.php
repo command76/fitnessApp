@@ -1,4 +1,6 @@
 <?php
+require dirname(__FILE__, 3) . "/controllers/login/authenticate.php";
+
 function upsert_latest_user_workouts($workouts, $connectionObject)
 {
   $queriesArray = [];
